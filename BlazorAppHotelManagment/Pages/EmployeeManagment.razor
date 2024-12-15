@@ -1,0 +1,138 @@
+﻿@page "/employee-management"
+@using Enteties
+@inject HotelManagmentLogic.Services.Commands.EmployeeCommandService CommandService
+@inject HotelManagmentLogic.Services.Querys.EmployeeQueryService QueryService
+@inject HotelManagmentLogic.Services.Querys.RoleQueryService RoleQueryService
+
+<h3>Employee Management</h3>
+
+<EditForm Model="@employeeModel" OnValidSubmit="@HandleValidSubmit">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <div>
+        <label for="firstName">First Name:</label>
+        <InputText id="firstName" @bind-Value="employeeModel.FirstName" class="form-control" />
+        <ValidationMessage For="@(() => employeeModel.FirstName)" />
+    </div>
+    <div>
+        <label for="lastName">Last Name:</label>
+        <InputText id="lastName" @bind-Value="employeeModel.LastName" class="form-control" />
+        <ValidationMessage For="@(() => employeeModel.LastName)" />
+    </div>
+    <div>
+        <label for="phoneNumber">Phone Number:</label>
+        <InputText id="phoneNumber" @bind-Value="employeeModel.PhoneNumber" class="form-control" />
+        <ValidationMessage For="@(() => employeeModel.PhoneNumber)" />
+    </div>
+    <div>
+        <label for="roleId">Role:</label>
+        <InputSelect id="roleId" @bind-Value="employeeModel.RoleId" class="form-control">
+            <option value="">Select a role</option>
+            @foreach (var role in roles)
+            {
+                <option value="@role.Id">@role.Name</option>
+            }
+        </InputSelect>
+        <ValidationMessage For="@(() => employeeModel.RoleId)" />
+    </div>
+
+    <button type="submit" class="btn btn-primary mt-2">Save</button>
+</EditForm>
+
+<hr />
+
+<h4>Employees List</h4>
+<table class="table">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>First Name</th>
+            <th>Last Name</th>
+            <th>Phone</th>
+            <th>Role</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (employees.Any())
+        {
+            @foreach (var employee in employees)
+            {
+                <tr>
+                    <td>@employee.Id</td>
+                    <td>@employee.FirstName</td>
+                    <td>@employee.LastName</td>
+                    <td>@employee.PhoneNumber</td>
+                    <td>@employee.Role?.Name</td>
+                    <td>
+                        <button class="btn btn-sm btn-primary" @onclick="() => EditEmployee(employee)">Edit</button>
+                        <button class="btn btn-sm btn-danger" @onclick="() => DeleteEmployee(employee.Id)">Delete</button>
+                    </td>
+                </tr>
+            }
+        }
+        else
+        {
+            <tr>
+                <td colspan="6" class="text-center">No employees found.</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@code {
+    private Employee employeeModel = new Employee();
+    private List<Employee> employees = new List<Employee>(); // Ensure initialization
+    private List<Role> roles = new List<Role>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadEmployees();
+        await LoadRoles();
+    }
+
+    private async Task LoadEmployees()
+    {
+        var result = await QueryService.GetAllEmployeesAsync();
+        employees = result?.ToList() ?? new List<Employee>(); // Handle null result
+    }
+
+    private async Task LoadRoles()
+    {
+        roles = (await RoleQueryService.GetAllRolesAsync()).ToList() ?? new List<Role>(); // Handle null result
+    }
+
+    private async Task HandleValidSubmit()
+    {
+        if (employeeModel.Id == 0)
+        {
+            await CommandService.AddEmployeeAsync(employeeModel);
+        }
+        else
+        {
+            await CommandService.UpdateEmployeeAsync(employeeModel);
+        }
+
+        employeeModel = new Employee(); // Reset the form
+        await LoadEmployees(); // Refresh the list
+    }
+
+    private void EditEmployee(Employee employee)
+    {
+        employeeModel = new Employee
+            {
+                Id = employee.Id,
+                FirstName = employee.FirstName,
+                LastName = employee.LastName,
+                PhoneNumber = employee.PhoneNumber,
+                RoleId = employee.RoleId
+            };
+    }
+
+    private async Task DeleteEmployee(int id)
+    {
+        await CommandService.DeleteEmployeeAsync(id);
+        await LoadEmployees(); // Refresh the list after deleting
+    }
+}

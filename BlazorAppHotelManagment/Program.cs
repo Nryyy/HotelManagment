@@ -24,10 +24,24 @@ builder.Services.AddDbContext<HotelDBContext>(options =>
 
 // Register other services
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+
 builder.Services.AddScoped<GuestCommandService>();
 builder.Services.AddScoped<GuestQueryService>();
+
+builder.Services.AddScoped<RoleCommandService>();
+builder.Services.AddScoped<RoleQueryService>();
+
+builder.Services.AddScoped<EmployeeCommandService>();
+builder.Services.AddScoped<EmployeeQueryService>();
+
 builder.Services.AddScoped<IGuestQueryRepository, GuestQueryRepository>();
 builder.Services.AddScoped<IGuestCommandRepository, GuestCommandRepository>();
+
+builder.Services.AddScoped<IRoleCommandRepository, RoleCommandRepository>();
+builder.Services.AddScoped<IRoleQueryRepository, RoleQueryRepository>();
+
+builder.Services.AddScoped<IEmployeeCommandRepository, EmployeeCommandRepository>();
+builder.Services.AddScoped<IEmployeeQueryRepository, EmployeeQueryRepository>();
 
 var app = builder.Build();
 
