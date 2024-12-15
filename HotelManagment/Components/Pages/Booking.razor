@@ -1,0 +1,108 @@
+﻿@page "/booking"
+@using EntityClasses
+@inject ApplicationManagment.Services.Commands.GuestCommandService CommandService
+@inject ApplicationManagment.Services.Querys.GuestQueryService QueryService
+
+<h3>Guest Management</h3>
+
+<EditForm Model="@guestModel" OnValidSubmit="@HandleValidSubmit" FormName="guestForm">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <div>
+        <label for="firstName">First Name:</label>
+        <InputText id="firstName" @bind-Value="guestModel.FirstName" />
+        <ValidationMessage For="@(() => guestModel.FirstName)" />
+    </div>
+    <div>
+        <label for="lastName">Last Name:</label>
+        <InputText id="lastName" @bind-Value="guestModel.LastName" />
+        <ValidationMessage For="@(() => guestModel.LastName)" />
+    </div>
+    <div>
+        <label for="email">Email:</label>
+        <InputText id="email" @bind-Value="guestModel.Email" />
+        <ValidationMessage For="@(() => guestModel.Email)" />
+    </div>
+    <div>
+        <label for="phoneNumber">Phone Number:</label>
+        <InputText id="phoneNumber" @bind-Value="guestModel.PhoneNumber" />
+        <ValidationMessage For="@(() => guestModel.PhoneNumber)" />
+    </div>
+
+    <button type="submit">Save</button>
+</EditForm>
+
+<hr />
+
+<h4>Guests List</h4>
+<table class="table">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>First Name</th>
+            <th>Last Name</th>
+            <th>Email</th>
+            <th>Phone</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var guest in guests)
+        {
+            <tr>
+                <td>@guest.Id</td>
+                <td>@guest.FirstName</td>
+                <td>@guest.LastName</td>
+                <td>@guest.Email</td>
+                <td>@guest.PhoneNumber</td>
+                <td>
+                    <button class="btn btn-sm btn-primary" @onclick="() => EditGuest(guest)">Edit</button>
+                    <button class="btn btn-sm btn-danger" @onclick="() => DeleteGuest(guest.Id)">Delete</button>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@code {
+    private Guest guestModel = new Guest();
+    private List<Guest> guests = new List<Guest>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadGuests();
+    }
+
+    private async Task LoadGuests()
+    {
+        guests = (await QueryService.GetAllGuestsAsync()).ToList();
+        StateHasChanged(); // Forces the UI to refresh after loading guests
+    }
+
+    private async Task HandleValidSubmit()
+    {
+        if (guestModel.Id == 0)
+        {
+            await CommandService.AddGuestAsync(guestModel);
+        }
+        else
+        {
+            await CommandService.UpdateGuestAsync(guestModel);
+        }
+
+        guestModel = new Guest(); // Reset the form
+        await LoadGuests(); // Refresh the list
+    }
+
+    private void EditGuest(Guest guest)
+    {
+        guestModel = guest;
+    }
+
+    private async Task DeleteGuest(int id)
+    {
+        await CommandService.DeleteGuestAsync(id);
+        await LoadGuests(); // Refresh the list after deleting
+    }
+}

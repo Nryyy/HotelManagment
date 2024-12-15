@@ -22,11 +22,10 @@ namespace HotelManagment.Application
         public DbSet<PaymentStatus> PaymentStatuses { get; set; }
         public DbSet<StayHistory> StayHistories { get; set; }
 
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        public HotelDBContext(DbContextOptions<HotelDBContext> options) : base(options)
         {
-            optionsBuilder.UseSqlServer("Server=localhost,1433;Database=HotelDB;User=sa;Password=Admin123!;TrustServerCertificate=True;");
         }
-
+   
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             // Fluent API relationships
