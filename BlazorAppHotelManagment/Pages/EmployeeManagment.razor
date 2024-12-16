@@ -3,6 +3,7 @@
 @inject HotelManagmentLogic.Services.Commands.EmployeeCommandService CommandService
 @inject HotelManagmentLogic.Services.Querys.EmployeeQueryService QueryService
 @inject HotelManagmentLogic.Services.Querys.RoleQueryService RoleQueryService
+@inject HotelManagmentLogic.Services.Commands.RoleCommandService RoleCommandService
 
 <h3>Employee Management</h3>
 
@@ -81,8 +82,61 @@
     </tbody>
 </table>
 
+<hr />
+
+<h3>Role Management</h3>
+
+<EditForm Model="@roleModel" OnValidSubmit="@HandleRoleValidSubmit">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <div>
+        <label for="roleName">Role Name:</label>
+        <InputText id="roleName" @bind-Value="roleModel.Name" class="form-control" />
+        <ValidationMessage For="@(() => roleModel.Name)" />
+    </div>
+
+    <button type="submit" class="btn btn-primary mt-2">Save</button>
+</EditForm>
+
+<hr />
+
+<h4>Roles List</h4>
+<table class="table">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (roles.Any())
+        {
+            @foreach (var role in roles)
+            {
+                <tr>
+                    <td>@role.Id</td>
+                    <td>@role.Name</td>
+                    <td>
+                        <button class="btn btn-sm btn-primary" @onclick="() => EditRole(role)">Edit</button>
+                        <button class="btn btn-sm btn-danger" @onclick="() => DeleteRole(role.Id)">Delete</button>
+                    </td>
+                </tr>
+            }
+        }
+        else
+        {
+            <tr>
+                <td colspan="3" class="text-center">No roles found.</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
 @code {
     private Employee employeeModel = new Employee();
+    private Role roleModel = new Role();
     private List<Employee> employees = new List<Employee>(); // Ensure initialization
     private List<Role> roles = new List<Role>();
 
@@ -118,6 +172,21 @@
         await LoadEmployees(); // Refresh the list
     }
 
+    private async Task HandleRoleValidSubmit()
+    {
+        if (roleModel.Id == 0)
+        {
+            await RoleCommandService.AddRoleAsync(roleModel);
+        }
+        else
+        {
+            await RoleCommandService.UpdateRoleAsync(roleModel);
+        }
+
+        roleModel = new Role(); // Reset the form
+        await LoadRoles(); // Refresh the list
+    }
+
     private void EditEmployee(Employee employee)
     {
         employeeModel = new Employee
@@ -130,9 +199,24 @@
             };
     }
 
+    private void EditRole(Role role)
+    {
+        roleModel = new Role
+            {
+                Id = role.Id,
+                Name = role.Name
+            };
+    }
+
     private async Task DeleteEmployee(int id)
     {
         await CommandService.DeleteEmployeeAsync(id);
         await LoadEmployees(); // Refresh the list after deleting
+    }
+
+    private async Task DeleteRole(int id)
+    {
+        await RoleCommandService.DeleteRoleAsync(id);
+        await LoadRoles(); // Refresh the list after deleting
     }
 }

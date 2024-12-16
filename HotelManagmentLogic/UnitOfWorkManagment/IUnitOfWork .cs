@@ -22,6 +22,10 @@ namespace HotelManagmentLogic.UnitOfWorkManagment
         IRoleQueryRepository RoleQueryRepository { get; }
         IRoleCommandRepository RoleCommandRepository { get; }
 
+        // PAYMENT BLOCK
+        IPaymentStatusCommandRepository PaymentStatusCommandRepository { get; }
+        IPaymentStatusQueryRepository PaymentStatusQueryRepository { get; }
+
         Task<int> CompleteAsync();
     }
 }

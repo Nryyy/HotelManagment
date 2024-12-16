@@ -27,6 +27,10 @@ namespace HotelManagmentLogic.UnitOfWorkManagment
         private IRoleQueryRepository _roleQueryRepository;
         private IRoleCommandRepository _roleCommandRepository;
 
+        // PAYMENT SECTION
+        private IPaymentStatusCommandRepository _paymentStatusCommandRepository;
+        private IPaymentStatusQueryRepository _paymentStatusQueryRepository;
+
         public UnitOfWork(HotelDBContext context)
         {
             _context = context;
@@ -105,6 +109,31 @@ namespace HotelManagmentLogic.UnitOfWorkManagment
                     _roleCommandRepository = new RoleCommandRepository(_context);
                 }
                 return _roleCommandRepository;
+            }
+        }
+
+        // PAYMENT BLOCK
+        public IPaymentStatusCommandRepository PaymentStatusCommandRepository
+        {
+            get
+            {
+                if (_paymentStatusCommandRepository == null)
+                {
+                    _paymentStatusCommandRepository = new PaymentStatusCommandRepository(_context);
+                }
+                return _paymentStatusCommandRepository;
+            }
+        }
+
+        public IPaymentStatusQueryRepository PaymentStatusQueryRepository
+        {
+            get
+            {
+                if (_paymentStatusQueryRepository == null)
+                {
+                    _paymentStatusQueryRepository = new PaymentStatusQueryRepository(_context);
+                }
+                return _paymentStatusQueryRepository;
             }
         }
 

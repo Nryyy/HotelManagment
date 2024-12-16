@@ -1,0 +1,100 @@
+﻿@page "/payment-management"
+@using Enteties
+@inject HotelManagmentLogic.Services.Commands.PaymentStatusCommandService PaymentStatusCommandService
+@inject HotelManagmentLogic.Services.Querys.PaymentStatusQueryService PaymentStatusQueryService
+
+<h3>Payment Management</h3>
+
+<EditForm Model="@paymentStatusModel" OnValidSubmit="@HandleValidSubmit">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <div>
+        <label for="statusName">Status Name:</label>
+        <InputText id="statusName" @bind-Value="paymentStatusModel.Name" class="form-control" />
+        <ValidationMessage For="@(() => paymentStatusModel.Name)" />
+    </div>
+
+    <button type="submit" class="btn btn-primary mt-2">Save</button>
+</EditForm>
+
+<hr />
+
+<h4>Payment Statuses List</h4>
+<table class="table">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (paymentStatuses.Any())
+        {
+            @foreach (var status in paymentStatuses)
+            {
+                <tr>
+                    <td>@status.Id</td>
+                    <td>@status.Name</td>
+                    <td>
+                        <button class="btn btn-sm btn-primary" @onclick="() => EditPaymentStatus(status)">Edit</button>
+                        <button class="btn btn-sm btn-danger" @onclick="() => DeletePaymentStatus(status.Id)">Delete</button>
+                    </td>
+                </tr>
+            }
+        }
+        else
+        {
+            <tr>
+                <td colspan="3" class="text-center">No payment statuses found.</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@code {
+    private PaymentStatus paymentStatusModel = new PaymentStatus();
+    private List<PaymentStatus> paymentStatuses = new List<PaymentStatus>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadPaymentStatuses();
+    }
+
+    private async Task LoadPaymentStatuses()
+    {
+        var result = await PaymentStatusQueryService.GetAllPaymentStatusesAsync();
+        paymentStatuses = result?.ToList() ?? new List<PaymentStatus>(); // Handle null result
+    }
+
+    private async Task HandleValidSubmit()
+    {
+        if (paymentStatusModel.Id == 0)
+        {
+            await PaymentStatusCommandService.AddPaymentStatusAsync(paymentStatusModel);
+        }
+        else
+        {
+            await PaymentStatusCommandService.UpdatePaymentStatusAsync(paymentStatusModel);
+        }
+
+        paymentStatusModel = new PaymentStatus(); // Reset the form
+        await LoadPaymentStatuses(); // Refresh the list
+    }
+
+    private void EditPaymentStatus(PaymentStatus status)
+    {
+        paymentStatusModel = new PaymentStatus
+            {
+                Id = status.Id,
+                Name = status.Name
+            };
+    }
+
+    private async Task DeletePaymentStatus(int id)
+    {
+        await PaymentStatusCommandService.DeletePaymentStatusAsync(id);
+        await LoadPaymentStatuses(); // Refresh the list after deleting
+    }
+}

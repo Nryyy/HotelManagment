@@ -34,6 +34,11 @@ builder.Services.AddScoped<RoleQueryService>();
 builder.Services.AddScoped<EmployeeCommandService>();
 builder.Services.AddScoped<EmployeeQueryService>();
 
+builder.Services.AddScoped<PaymentStatusCommandService>();
+builder.Services.AddScoped<PaymentStatusQueryService>();
+
+
+
 builder.Services.AddScoped<IGuestQueryRepository, GuestQueryRepository>();
 builder.Services.AddScoped<IGuestCommandRepository, GuestCommandRepository>();
 
@@ -42,6 +47,9 @@ builder.Services.AddScoped<IRoleQueryRepository, RoleQueryRepository>();
 
 builder.Services.AddScoped<IEmployeeCommandRepository, EmployeeCommandRepository>();
 builder.Services.AddScoped<IEmployeeQueryRepository, EmployeeQueryRepository>();
+
+builder.Services.AddScoped<IPaymentStatusCommandRepository, PaymentStatusCommandRepository>();
+builder.Services.AddScoped<IPaymentStatusQueryRepository, PaymentStatusQueryRepository>();
 
 var app = builder.Build();
 
