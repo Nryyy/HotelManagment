@@ -1,5 +1,6 @@
-﻿using HotelManagmentLogic.Interfaces.IRepoository.Commands;
-using HotelManagmentLogic.Interfaces.IRepoository.Querys;
+﻿using HotelManagmentLogic.Interfaces.Queries;
+using HotelManagmentLogic.Interfaces.Commands;
+using Enteties;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,20 +12,27 @@ namespace HotelManagmentLogic.UnitOfWorkManagment
     public interface IUnitOfWork : IDisposable
     {
         // GUEST BLOCK
-        IGuestQueryRepository GuestQueryRepository { get; }
-        IGuestCommandRepository GuestCommandRepository { get; }
+
+        IRepositoryQueries<Guest> GuestQueryRepository { get; }
+        IRepositoryCommands<Guest> GuestCommandRepository { get; }
 
         // EMPLOYEE BLOCK
-        IEmployeeQueryRepository EmployeeQueryRepository { get; }
-        IEmployeeCommandRepository EmployeeCommandRepository { get; }
+        IRepositoryQueries<Employee> EmployeeQueryRepository { get; }
+        IRepositoryCommands<Employee> EmployeeCommandRepository { get; }
 
         // ROLE BLOCK
-        IRoleQueryRepository RoleQueryRepository { get; }
-        IRoleCommandRepository RoleCommandRepository { get; }
+        IRepositoryQueries<Role> RoleQueryRepository { get; }
+        IRepositoryCommands<Role> RoleCommandRepository { get; }
 
         // PAYMENT BLOCK
-        IPaymentStatusCommandRepository PaymentStatusCommandRepository { get; }
-        IPaymentStatusQueryRepository PaymentStatusQueryRepository { get; }
+        IRepositoryCommands<PaymentStatus> PaymentStatusCommandRepository { get; }
+        IRepositoryQueries<PaymentStatus> PaymentStatusQueryRepository { get; }
+
+        IRepositoryCommands<PaymentMethod> PaymentMethodCommandRepository { get; }
+        IRepositoryQueries<PaymentMethod> PaymentMethodQueryRepository { get; }
+
+        IRepositoryCommands<BookingPayment> BookingPaymentCommandRepository { get; }
+        IRepositoryQueries<BookingPayment> BookingPaymentQueryRepository { get; }
 
         Task<int> CompleteAsync();
     }

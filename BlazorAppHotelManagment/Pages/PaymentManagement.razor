@@ -2,10 +2,99 @@
 @using Enteties
 @inject HotelManagmentLogic.Services.Commands.PaymentStatusCommandService PaymentStatusCommandService
 @inject HotelManagmentLogic.Services.Querys.PaymentStatusQueryService PaymentStatusQueryService
+@inject HotelManagmentLogic.Services.Commands.PaymentMethodCommandService PaymentMethodCommandService
+@inject HotelManagmentLogic.Services.Querys.PaymentMethodQueryService PaymentMethodQueryService
+@inject HotelManagmentLogic.Services.Commands.BookingPaymentCommandService BookingPaymentCommandService
+@inject HotelManagmentLogic.Services.Querys.BookingPaymentQueryService BookingPaymentQueryService
+
+<h3>Booking Payments Management</h3>
+
+<EditForm Model="@bookingPaymentModel" OnValidSubmit="@HandleValidSubmitBookingPayment">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <div>
+        <label for="paymentDay">Payment Day:</label>
+        <InputDate id="paymentDay" @bind-Value="bookingPaymentModel.PaymentDay" class="form-control" />
+        <ValidationMessage For="@(() => bookingPaymentModel.PaymentDay)" />
+    </div>
+    <div>
+        <label for="amount">Amount:</label>
+        <InputNumber id="amount" @bind-Value="bookingPaymentModel.Amount" class="form-control" />
+        <ValidationMessage For="@(() => bookingPaymentModel.Amount)" />
+    </div>
+    <div>
+        <label for="paymentMethodId">Payment Method:</label>
+        <InputSelect id="paymentMethodId" @bind-Value="bookingPaymentModel.PaymentMethodId" class="form-control">
+            <option value="0" disabled>Select Payment Method</option>
+            @foreach (var method in paymentMethods)
+            {
+                <option value="@method.Id">@method.Name</option>
+            }
+        </InputSelect>
+        <ValidationMessage For="@(() => bookingPaymentModel.PaymentMethodId)" />
+    </div>
+    <div>
+        <label for="paymentStatusId">Payment Status:</label>
+        <InputSelect id="paymentStatusId" @bind-Value="bookingPaymentModel.PaymentStatusId" class="form-control">
+            <option value="0" disabled>Select Payment Status</option>
+            @foreach (var status in paymentStatuses)
+            {
+                <option value="@status.Id">@status.Name</option>
+            }
+        </InputSelect>
+        <ValidationMessage For="@(() => bookingPaymentModel.PaymentStatusId)" />
+    </div>
+
+    <button type="submit" class="btn btn-primary mt-2">Save</button>
+</EditForm>
+
+<hr />
+
+<h4>Booking Payments List</h4>
+<table class="table">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Payment Day</th>
+            <th>Amount</th>
+            <th>Payment Method</th>
+            <th>Payment Status</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (bookingPayments.Any())
+        {
+            @foreach (var payment in bookingPayments)
+            {
+                <tr>
+                    <td>@payment.Id</td>
+                    <td>@payment.PaymentDay.ToShortDateString()</td>
+                    <td>@payment.Amount</td>
+                    <td>@paymentMethods.FirstOrDefault(m => m.Id == payment.PaymentMethodId)?.Name</td>
+                    <td>@paymentStatuses.FirstOrDefault(s => s.Id == payment.PaymentStatusId)?.Name</td>
+                    <td>
+                        <button class="btn btn-sm btn-primary" @onclick="() => EditBookingPayment(payment)">Edit</button>
+                        <button class="btn btn-sm btn-danger" @onclick="() => DeleteBookingPayment(payment.Id)">Delete</button>
+                    </td>
+                </tr>
+            }
+        }
+        else
+        {
+            <tr>
+                <td colspan="6" class="text-center">No booking payments found.</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<hr />
 
 <h3>Payment Management</h3>
 
-<EditForm Model="@paymentStatusModel" OnValidSubmit="@HandleValidSubmit">
+<EditForm Model="@paymentStatusModel" OnValidSubmit="@HandleValidSubmitStatus">
     <DataAnnotationsValidator />
     <ValidationSummary />
 
@@ -53,22 +142,105 @@
     </tbody>
 </table>
 
+<hr />
+
+<h4>Payment Methods List</h4>
+<EditForm Model="@paymentMethodModel" OnValidSubmit="@HandleValidSubmitMethod">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <div>
+        <label for="methodName">Method Name:</label>
+        <InputText id="methodName" @bind-Value="paymentMethodModel.Name" class="form-control" />
+        <ValidationMessage For="@(() => paymentMethodModel.Name)" />
+    </div>
+
+    <button type="submit" class="btn btn-primary mt-2">Save</button>
+</EditForm>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (paymentMethods.Any())
+        {
+            @foreach (var method in paymentMethods)
+            {
+                <tr>
+                    <td>@method.Id</td>
+                    <td>@method.Name</td>
+                    <td>
+                        <button class="btn btn-sm btn-primary" @onclick="() => EditPaymentMethod(method)">Edit</button>
+                        <button class="btn btn-sm btn-danger" @onclick="() => DeletePaymentMethod(method.Id)">Delete</button>
+                    </td>
+                </tr>
+            }
+        }
+        else
+        {
+            <tr>
+                <td colspan="3" class="text-center">No payment methods found.</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
 @code {
     private PaymentStatus paymentStatusModel = new PaymentStatus();
     private List<PaymentStatus> paymentStatuses = new List<PaymentStatus>();
 
+    private PaymentMethod paymentMethodModel = new PaymentMethod();
+    private List<PaymentMethod> paymentMethods = new List<PaymentMethod>();
+
+    private BookingPayment bookingPaymentModel = new BookingPayment();
+    private List<BookingPayment> bookingPayments = new List<BookingPayment>();
+
     protected override async Task OnInitializedAsync()
     {
         await LoadPaymentStatuses();
+        await LoadPaymentMethods();
+        await LoadBookingPayments();
     }
 
     private async Task LoadPaymentStatuses()
     {
         var result = await PaymentStatusQueryService.GetAllPaymentStatusesAsync();
-        paymentStatuses = result?.ToList() ?? new List<PaymentStatus>(); // Handle null result
+        paymentStatuses = result?.ToList() ?? new List<PaymentStatus>();
     }
 
-    private async Task HandleValidSubmit()
+    private async Task LoadPaymentMethods()
+    {
+        var result = await PaymentMethodQueryService.GetAllPaymentMethodAsync();
+        paymentMethods = result?.ToList() ?? new List<PaymentMethod>();
+    }
+
+    private async Task LoadBookingPayments()
+    {
+        var result = await BookingPaymentQueryService.GetAllBookingPaymentsAsync();
+        bookingPayments = result?.ToList() ?? new List<BookingPayment>();
+    }
+
+    private async Task HandleValidSubmitBookingPayment()
+    {
+        if (bookingPaymentModel.Id == 0)
+        {
+            await BookingPaymentCommandService.AddBookingPaymentAsync(bookingPaymentModel);
+        }
+        else
+        {
+            await BookingPaymentCommandService.UpdateBookingPaymentAsync(bookingPaymentModel);
+        }
+
+        bookingPaymentModel = new BookingPayment();
+        await LoadBookingPayments();
+    }
+
+    private async Task HandleValidSubmitStatus()
     {
         if (paymentStatusModel.Id == 0)
         {
@@ -83,6 +255,33 @@
         await LoadPaymentStatuses(); // Refresh the list
     }
 
+    private async Task HandleValidSubmitMethod()
+    {
+        if (paymentMethodModel.Id == 0)
+        {
+            await PaymentMethodCommandService.AddPaymentMethodAsync(paymentMethodModel);
+        }
+        else
+        {
+            await PaymentMethodCommandService.UpdatePaymentMethodAsync(paymentMethodModel);
+        }
+
+        paymentMethodModel = new PaymentMethod(); // Reset the form
+        await LoadPaymentMethods(); // Refresh the list
+    }
+
+    private void EditBookingPayment(BookingPayment payment)
+    {
+        bookingPaymentModel = new BookingPayment
+            {
+                Id = payment.Id,
+                PaymentDay = payment.PaymentDay,
+                Amount = payment.Amount,
+                PaymentMethodId = payment.PaymentMethodId,
+                PaymentStatusId = payment.PaymentStatusId
+            };
+    }
+
     private void EditPaymentStatus(PaymentStatus status)
     {
         paymentStatusModel = new PaymentStatus
@@ -92,9 +291,31 @@
             };
     }
 
+    private void EditPaymentMethod(PaymentMethod method)
+    {
+        paymentMethodModel = new PaymentMethod
+            {
+                Id = method.Id,
+                Name = method.Name
+            };
+    }
+
+    private async Task DeleteBookingPayment(int id)
+    {
+        await BookingPaymentCommandService.DeleteBookingPaymentAsync(id);
+        await LoadBookingPayments();
+    }
+
     private async Task DeletePaymentStatus(int id)
     {
         await PaymentStatusCommandService.DeletePaymentStatusAsync(id);
         await LoadPaymentStatuses(); // Refresh the list after deleting
     }
+
+    private async Task DeletePaymentMethod(int id)
+    {
+        await PaymentMethodCommandService.DeletePaymentMethodAsync(id);
+        await LoadPaymentMethods(); // Refresh the list after deleting
+    }
 }
+

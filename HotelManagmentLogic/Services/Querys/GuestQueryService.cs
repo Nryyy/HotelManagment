@@ -19,12 +19,12 @@ namespace HotelManagmentLogic.Services.Querys
 
         public async Task<Guest> GetGuestByIdAsync(int id)
         {
-            return await _unitOfWork.GuestQueryRepository.GetGuestByIdAsync(id);
+            return await _unitOfWork.GuestQueryRepository.GetByIdAsync(id);
         }
 
         public async Task<IEnumerable<Guest>> GetAllGuestsAsync()
         {
-            return await _unitOfWork.GuestQueryRepository.GetAllGuestsAsync();
+            return await _unitOfWork.GuestQueryRepository.GetAllAsync();
         }
     }
 }

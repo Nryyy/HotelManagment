@@ -19,12 +19,12 @@ namespace HotelManagmentLogic.Services.Querys
 
         public async Task<Role> GetRoleByIdAsync(int id)
         {
-            return await _unitOfWork.RoleQueryRepository.GetRoleByIdAsync(id);
+            return await _unitOfWork.RoleQueryRepository.GetByIdAsync(id);
         }
 
         public Task<IEnumerable<Role>> GetAllRolesAsync()
         {
-            return _unitOfWork.RoleQueryRepository.GetAllRoleAsync();
+            return _unitOfWork.RoleQueryRepository.GetAllAsync();
         }
     }
 }

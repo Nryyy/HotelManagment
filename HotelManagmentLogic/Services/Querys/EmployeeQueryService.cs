@@ -18,12 +18,12 @@ namespace HotelManagmentLogic.Services.Querys
 
         public async Task<Enteties.Employee> GetEmployeeByIdAsync(int id)
         {
-            return await _unitOfWork.EmployeeQueryRepository.GetEmployeeByIdAsync(id);
+            return await _unitOfWork.EmployeeQueryRepository.GetByIdAsync(id);
         }
 
         public async Task<IEnumerable<Enteties.Employee>> GetAllEmployeesAsync()
         {
-            return await _unitOfWork.EmployeeQueryRepository.GetAllEmployeesAsync();
+            return await _unitOfWork.EmployeeQueryRepository.GetAllAsync();
         }
     }
 }

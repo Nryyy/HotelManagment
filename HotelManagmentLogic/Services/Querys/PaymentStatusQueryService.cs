@@ -18,12 +18,12 @@ namespace HotelManagmentLogic.Services.Querys
 
         public async Task<Enteties.PaymentStatus> GetPaymentStatusByIdAsync(int id)
         {
-            return await _unitOfWork.PaymentStatusQueryRepository.GetPaymentStatusByIdAsync(id);
+            return await _unitOfWork.PaymentStatusQueryRepository.GetByIdAsync(id);
         }
 
         public async Task<IEnumerable<Enteties.PaymentStatus>> GetAllPaymentStatusesAsync()
         {
-            return await _unitOfWork.PaymentStatusQueryRepository.GetAllPaymentStatusAsync();
+            return await _unitOfWork.PaymentStatusQueryRepository.GetAllAsync();
         }
     }
 }

@@ -1,8 +1,9 @@
-﻿using HotelManagmentLogic.ApplicationContext;
-using HotelManagmentLogic.Interfaces.IRepoository.Commands;
-using HotelManagmentLogic.Interfaces.IRepoository.Querys;
+﻿using Enteties;
+using HotelManagmentLogic.ApplicationContext;
+using HotelManagmentLogic.Interfaces.Commands;
+using HotelManagmentLogic.Interfaces.Queries;
 using HotelManagmentLogic.Repositories.Commands;
-using HotelManagmentLogic.Repositories.Querys;
+using HotelManagmentLogic.Repositories.Queries;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,20 +17,25 @@ namespace HotelManagmentLogic.UnitOfWorkManagment
         private readonly HotelDBContext _context;
 
         // GUEST SECTION
-        private IGuestQueryRepository _guestQueryRepository;
-        private IGuestCommandRepository _guestCommandRepository;
+        private RepositoryQueries<Guest> _guestQueryRepository;
+        private RepositoryCommands<Guest> _guestCommandRepository;
 
         // EMPLOYEE SECTION
-        private IEmployeeQueryRepository _employeeQueryRepository;
-        private IEmployeeCommandRepository _employeeCommandRepository;
+        private RepositoryQueries<Employee> _employeeQueryRepository;
+        private RepositoryCommands<Employee> _employeeCommandRepository;
 
         // ROLE SECTION
-        private IRoleQueryRepository _roleQueryRepository;
-        private IRoleCommandRepository _roleCommandRepository;
+        private RepositoryQueries<Role> _roleQueryRepository;
+        private RepositoryCommands<Role> _roleCommandRepository;
 
         // PAYMENT SECTION
-        private IPaymentStatusCommandRepository _paymentStatusCommandRepository;
-        private IPaymentStatusQueryRepository _paymentStatusQueryRepository;
+        private RepositoryCommands<PaymentStatus> _paymentStatusCommandRepository;
+        private RepositoryQueries<PaymentStatus> _paymentStatusQueryRepository;
+        private RepositoryCommands<PaymentMethod> _paymentMethodCommandRepository;
+        private RepositoryQueries<PaymentMethod> _paymentMethodQueryRepository;
+        private RepositoryCommands<BookingPayment> _bookingPaymentCommandRepository;
+        private RepositoryQueries<BookingPayment> _bookingPaymentQueryRepository;
+
 
         public UnitOfWork(HotelDBContext context)
         {
@@ -38,105 +44,152 @@ namespace HotelManagmentLogic.UnitOfWorkManagment
 
 
         // GUEST BLOCK
-        public IGuestQueryRepository GuestQueryRepository
+        public IRepositoryQueries<Guest> GuestQueryRepository
         {
             get
             {
                 if (_guestQueryRepository == null)
                 {
-                    _guestQueryRepository = new GuestQueryRepository(_context);
+                    _guestQueryRepository = new RepositoryQueries<Guest>(_context);
                 }
                 return _guestQueryRepository;
             }
         }
 
-        public IGuestCommandRepository GuestCommandRepository
+        public IRepositoryCommands<Guest> GuestCommandRepository
         {
             get
             {
                 if (_guestCommandRepository == null)
                 {
-                    _guestCommandRepository = new GuestCommandRepository(_context);
+                    _guestCommandRepository = new RepositoryCommands<Guest>(_context);
                 }
                 return _guestCommandRepository;
             }
         }
 
         // EMPLOYEE BLOCK
-        public IEmployeeQueryRepository EmployeeQueryRepository
+        public IRepositoryQueries<Employee> EmployeeQueryRepository
         {
             get
             {
                 if (_employeeQueryRepository == null)
                 {
-                    _employeeQueryRepository = new EmployeeQueryRepository(_context);
+                    _employeeQueryRepository = new RepositoryQueries<Employee>(_context);
                 }
                 return _employeeQueryRepository;
             }
         }
 
-        public IEmployeeCommandRepository EmployeeCommandRepository
+        public IRepositoryCommands<Employee> EmployeeCommandRepository
         {
             get
             {
                 if (_employeeCommandRepository == null)
                 {
-                    _employeeCommandRepository = new EmployeeCommandRepository(_context);
+                    _employeeCommandRepository = new RepositoryCommands<Employee>(_context);
                 }
                 return _employeeCommandRepository;
             }
         }
 
         // ROLE BLOCK
-        public IRoleQueryRepository RoleQueryRepository
+        public IRepositoryQueries<Role> RoleQueryRepository
         {
             get
             {
                 if (_roleQueryRepository == null)
                 {
-                    _roleQueryRepository = new RoleQueryRepository(_context);
+                    _roleQueryRepository = new RepositoryQueries<Role>(_context);
                 }
                 return _roleQueryRepository;
             }
         }
 
-        public IRoleCommandRepository RoleCommandRepository
+        public IRepositoryCommands<Role> RoleCommandRepository
         {
             get
             {
                 if (_roleCommandRepository == null)
                 {
-                    _roleCommandRepository = new RoleCommandRepository(_context);
+                    _roleCommandRepository = new RepositoryCommands<Role>(_context);
                 }
                 return _roleCommandRepository;
             }
         }
 
         // PAYMENT BLOCK
-        public IPaymentStatusCommandRepository PaymentStatusCommandRepository
+        public IRepositoryCommands<PaymentStatus> PaymentStatusCommandRepository
         {
             get
             {
                 if (_paymentStatusCommandRepository == null)
                 {
-                    _paymentStatusCommandRepository = new PaymentStatusCommandRepository(_context);
+                    _paymentStatusCommandRepository = new RepositoryCommands<PaymentStatus>(_context);
                 }
                 return _paymentStatusCommandRepository;
             }
         }
 
-        public IPaymentStatusQueryRepository PaymentStatusQueryRepository
+        public IRepositoryQueries<PaymentStatus> PaymentStatusQueryRepository
         {
             get
             {
                 if (_paymentStatusQueryRepository == null)
                 {
-                    _paymentStatusQueryRepository = new PaymentStatusQueryRepository(_context);
+                    _paymentStatusQueryRepository = new RepositoryQueries<PaymentStatus>(_context);
                 }
                 return _paymentStatusQueryRepository;
             }
         }
 
+        public IRepositoryCommands<PaymentMethod> PaymentMethodCommandRepository
+        {
+            get
+            {
+                if (_paymentMethodCommandRepository == null)
+                {
+                    _paymentMethodCommandRepository = new RepositoryCommands<PaymentMethod>(_context);
+                }
+                return _paymentMethodCommandRepository;
+            }
+        }
+
+        public IRepositoryQueries<PaymentMethod> PaymentMethodQueryRepository
+        {
+            get
+            {
+                if (_paymentMethodQueryRepository == null)
+                {
+                    _paymentMethodQueryRepository = new RepositoryQueries<PaymentMethod>(_context);
+                }
+                return _paymentMethodQueryRepository;
+            }
+        }
+
+        public IRepositoryCommands<BookingPayment> BookingPaymentCommandRepository
+        {
+            get
+            {
+                if (_bookingPaymentCommandRepository == null)
+                {
+                    _bookingPaymentCommandRepository = new RepositoryCommands<BookingPayment>(_context);
+                }
+                return _bookingPaymentCommandRepository;
+            }
+        }
+
+        public IRepositoryQueries<BookingPayment> BookingPaymentQueryRepository
+        {
+            get
+            {
+                if (_bookingPaymentQueryRepository == null)
+                {
+                    _bookingPaymentQueryRepository = new RepositoryQueries<BookingPayment>(_context);
+                }
+                return _bookingPaymentQueryRepository;
+            }
+        }
 
         public async Task<int> CompleteAsync()
         {

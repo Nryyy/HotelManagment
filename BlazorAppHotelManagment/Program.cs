@@ -3,9 +3,6 @@ using HotelManagmentLogic.ApplicationContext; // Ensure this namespace is correc
 using HotelManagmentLogic.UnitOfWorkManagment;
 using HotelManagmentLogic.Services.Commands;
 using HotelManagmentLogic.Services.Querys;
-using HotelManagmentLogic.Interfaces.IRepoository.Querys;
-using HotelManagmentLogic.Interfaces.IRepoository.Commands;
-using HotelManagmentLogic.Repositories.Querys;
 using HotelManagmentLogic.Repositories.Commands;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
@@ -37,19 +34,11 @@ builder.Services.AddScoped<EmployeeQueryService>();
 builder.Services.AddScoped<PaymentStatusCommandService>();
 builder.Services.AddScoped<PaymentStatusQueryService>();
 
+builder.Services.AddScoped<PaymentMethodCommandService>();
+builder.Services.AddScoped<PaymentMethodQueryService>();
 
-
-builder.Services.AddScoped<IGuestQueryRepository, GuestQueryRepository>();
-builder.Services.AddScoped<IGuestCommandRepository, GuestCommandRepository>();
-
-builder.Services.AddScoped<IRoleCommandRepository, RoleCommandRepository>();
-builder.Services.AddScoped<IRoleQueryRepository, RoleQueryRepository>();
-
-builder.Services.AddScoped<IEmployeeCommandRepository, EmployeeCommandRepository>();
-builder.Services.AddScoped<IEmployeeQueryRepository, EmployeeQueryRepository>();
-
-builder.Services.AddScoped<IPaymentStatusCommandRepository, PaymentStatusCommandRepository>();
-builder.Services.AddScoped<IPaymentStatusQueryRepository, PaymentStatusQueryRepository>();
+builder.Services.AddScoped<BookingPaymentCommandService>();
+builder.Services.AddScoped<BookingPaymentQueryService>();
 
 var app = builder.Build();
 
