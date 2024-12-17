@@ -40,6 +40,15 @@ builder.Services.AddScoped<PaymentMethodQueryService>();
 builder.Services.AddScoped<BookingPaymentCommandService>();
 builder.Services.AddScoped<BookingPaymentQueryService>();
 
+builder.Services.AddScoped<RoomStatusCommandService>();
+builder.Services.AddScoped<RoomStatusQueryService>();
+
+builder.Services.AddScoped<RoomcategoryCommandService>();
+builder.Services.AddScoped<RoomcategoryQueryService>();
+
+builder.Services.AddScoped<RoomCommandService>();
+builder.Services.AddScoped<RoomQueryService>();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

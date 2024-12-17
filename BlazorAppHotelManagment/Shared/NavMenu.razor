@@ -1,6 +1,6 @@
-﻿<div class="top-row ps-3 navbar navbar-dark">
+﻿<div class="top-row ps-3 navbar navbar-dark bg-dark shadow-sm">
     <div class="container-fluid">
-        <a class="navbar-brand" href="">BlazorAppHotelManagment</a>
+        <a class="navbar-brand text-white" href="">BlazorAppHotelManagement</a>
         <button title="Navigation menu" class="navbar-toggler" @onclick="ToggleNavMenu">
             <span class="navbar-toggler-icon"></span>
         </button>
@@ -8,20 +8,10 @@
 </div>
 
 <div class="@NavMenuCssClass">
-    <nav class="flex-column">
+    <nav class="d-flex flex-column bg-light p-3 shadow-sm">
         <div class="nav-item px-3">
-            <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
+            <NavLink class="nav-link text-dark" href="" Match="NavLinkMatch.All">
                 <span class="oi oi-home" aria-hidden="true"></span> Home
-            </NavLink>
-        </div>
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="counter">
-                <span class="oi oi-plus" aria-hidden="true"></span> Counter
-            </NavLink>
-        </div>
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="fetchdata">
-                <span class="oi oi-list-rich" aria-hidden="true"></span> Fetch data
             </NavLink>
         </div>
 
@@ -29,28 +19,36 @@
         {
             <div class="nav-item px-3">
                 <!-- Administration Menu -->
-                <a class="nav-link" href="#" @onclick="ToggleAdminSubMenu">
-                    <span class="oi oi-cog" aria-hidden="true"></span> Administration
+                <a class="nav-link text-dark d-flex align-items-center" href="#" @onclick="ToggleAdminSubMenu">
+                    <span class="oi oi-cog me-2" aria-hidden="true"></span> Administration
+                    <span class="oi oi-chevron-bottom ms-auto" aria-hidden="true"></span>
                 </a>
                 <!-- Submenu -->
                 <div class="@AdminSubMenuCssClass" style="margin-left: 20px;">
                     <div class="nav-item px-3">
-                        <NavLink class="nav-link" href="booking">
+                        <NavLink class="nav-link text-dark" href="booking">
                             <span class="oi oi-person" aria-hidden="true"></span> Guest
                         </NavLink>
                     </div>
                 </div>
                 <div class="@AdminSubMenuCssClass" style="margin-left: 20px;">
                     <div class="nav-item px-3">
-                        <NavLink class="nav-link" href="employee-management">
+                        <NavLink class="nav-link text-dark" href="employee-management">
                             <span class="oi oi-person" aria-hidden="true"></span> Staff
                         </NavLink>
                     </div>
                 </div>
                 <div class="@AdminSubMenuCssClass" style="margin-left: 20px;">
                     <div class="nav-item px-3">
-                        <NavLink class="nav-link" href="payment-management">
-                            <span class="oi oi-person" aria-hidden="true"></span> Payment
+                        <NavLink class="nav-link text-dark" href="payment-management">
+                            <span class="oi oi-credit-card" aria-hidden="true"></span> Payment
+                        </NavLink>
+                    </div>
+                </div>
+                <div class="@AdminSubMenuCssClass" style="margin-left: 20px;">
+                    <div class="nav-item px-3">
+                        <NavLink class="nav-link text-dark" href="room-management">
+                            <span class="oi oi-bed" aria-hidden="true"></span> Room
                         </NavLink>
                     </div>
                 </div>

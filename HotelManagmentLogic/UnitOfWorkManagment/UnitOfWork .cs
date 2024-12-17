@@ -36,6 +36,17 @@ namespace HotelManagmentLogic.UnitOfWorkManagment
         private RepositoryCommands<BookingPayment> _bookingPaymentCommandRepository;
         private RepositoryQueries<BookingPayment> _bookingPaymentQueryRepository;
 
+        // ROOM SECTION
+        private RepositoryCommands<RoomStatus> _roomStatusCommandRepository;
+        private RepositoryQueries<RoomStatus> _roomStatusQueryRepository;
+
+        private RepositoryCommands<Room> _roomCommandRepository;
+        private RepositoryQueries<Room> _roomQueryRepository;
+
+        // CATEGORY SECTION
+        private RepositoryCommands<Category> _roomCategoryCommandRepository;
+        private RepositoryQueries<Category> _roomCategoryQueryRepository;
+
 
         public UnitOfWork(HotelDBContext context)
         {
@@ -188,6 +199,81 @@ namespace HotelManagmentLogic.UnitOfWorkManagment
                     _bookingPaymentQueryRepository = new RepositoryQueries<BookingPayment>(_context);
                 }
                 return _bookingPaymentQueryRepository;
+            }
+        }
+
+        // ROOM BLOCK
+        public IRepositoryCommands<RoomStatus> RoomStatusCommandRepository
+        {
+            get
+            {
+                if (_roomStatusCommandRepository == null)
+                {
+                    _roomStatusCommandRepository = new RepositoryCommands<RoomStatus>(_context);
+                }
+                return _roomStatusCommandRepository;
+            }
+        }
+
+        public IRepositoryQueries<RoomStatus> RoomStatusQueryRepository
+        {
+            get
+            {
+                if (_roomStatusQueryRepository == null)
+                {
+                    _roomStatusQueryRepository = new RepositoryQueries<RoomStatus>(_context);
+                }
+                return _roomStatusQueryRepository;
+            }
+        }
+
+        public IRepositoryCommands<Room> RoomCommandRepository
+        {
+            get
+            {
+                if (_roomCommandRepository == null)
+                {
+                    _roomCommandRepository = new RepositoryCommands<Room>(_context);
+                }
+                return _roomCommandRepository;
+            }
+        }
+
+        public IRepositoryQueries<Room> RoomQueryRepository
+        {
+            get
+            {
+                if (_roomQueryRepository == null)
+                {
+                    _roomQueryRepository = new RepositoryQueries<Room>(_context);
+                }
+                return _roomQueryRepository;
+            }
+        }
+
+        // CATEGORY BLOCK
+
+        public IRepositoryQueries<Category> RoomCategoryQueryRepository
+        {
+            get
+            {
+                if (_roomCategoryQueryRepository == null)
+                {
+                    _roomCategoryQueryRepository = new RepositoryQueries<Category>(_context);
+                }
+                return _roomCategoryQueryRepository;
+            }
+        }
+
+        public IRepositoryCommands<Category> RoomCategoryCommandRepository
+        {
+            get
+            {
+                if (_roomCategoryCommandRepository == null)
+                {
+                    _roomCategoryCommandRepository = new RepositoryCommands<Category>(_context);
+                }
+                return _roomCategoryCommandRepository;
             }
         }
 

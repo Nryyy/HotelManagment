@@ -1,0 +1,338 @@
+﻿@page "/room-management"
+@using Enteties
+@inject HotelManagmentLogic.Services.Commands.RoomStatusCommandService RoomStatusCommandService
+@inject HotelManagmentLogic.Services.Querys.RoomStatusQueryService RoomStatusQueryService
+@inject HotelManagmentLogic.Services.Commands.RoomcategoryCommandService RoomCategoryCommandService
+@inject HotelManagmentLogic.Services.Querys.RoomcategoryQueryService RoomCategoryQueryService
+@inject HotelManagmentLogic.Services.Commands.RoomCommandService RoomCommandService
+@inject HotelManagmentLogic.Services.Querys.RoomQueryService RoomQueryService
+
+@* Modern container with padding and box-shadow *@
+<div class="container mt-5">
+    <h3 class="text-center text-primary">Room Status Management</h3>
+
+    <EditForm Model="@roomStatusModel" OnValidSubmit="@HandleValidSubmitRoomStatus">
+        <DataAnnotationsValidator />
+        <ValidationSummary />
+
+        <div class="form-group mb-4">
+            <label for="statusName" class="form-label">Status Name:</label>
+            <InputText id="statusName" @bind-Value="roomStatusModel.Name" class="form-control form-control-lg" />
+            <ValidationMessage For="@(() => roomStatusModel.Name)" />
+        </div>
+
+        <button type="submit" class="btn btn-success btn-lg w-100">Save Status</button>
+    </EditForm>
+
+    <hr />
+
+    <h4 class="text-center text-info">Room Statuses List</h4>
+
+    <table class="table table-striped table-hover">
+        <thead class="table-dark">
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (roomStatuses.Any())
+            {
+                @foreach (var status in roomStatuses)
+                {
+                    <tr>
+                        <td>@status.Id</td>
+                        <td>@status.Name</td>
+                        <td>
+                            <button class="btn btn-sm btn-primary" @onclick="() => EditRoomStatus(status)">Edit</button>
+                            <button class="btn btn-sm btn-danger" @onclick="() => DeleteRoomStatus(status.Id)">Delete</button>
+                        </td>
+                    </tr>
+                }
+            }
+            else
+            {
+                <tr>
+                    <td colspan="3" class="text-center">No room statuses found.</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <hr />
+
+    <h3 class="text-center text-primary">Room Category Management</h3>
+
+    <EditForm Model="@roomCategoryModel" OnValidSubmit="@HandleValidSubmitRoomCategory">
+        <DataAnnotationsValidator />
+        <ValidationSummary />
+
+        <div class="form-group mb-4">
+            <label for="categoryName" class="form-label">Category Name:</label>
+            <InputText id="categoryName" @bind-Value="roomCategoryModel.Name" class="form-control form-control-lg" />
+            <ValidationMessage For="@(() => roomCategoryModel.Name)" />
+        </div>
+        <div class="form-group mb-4">
+            <label for="pricePerNight" class="form-label">Price Per Night:</label>
+            <InputNumber id="pricePerNight" @bind-Value="roomCategoryModel.PricePerNight" class="form-control form-control-lg" />
+            <ValidationMessage For="@(() => roomCategoryModel.PricePerNight)" />
+        </div>
+
+        <button type="submit" class="btn btn-success btn-lg w-100">Save Category</button>
+    </EditForm>
+
+    <hr />
+
+    <h4 class="text-center text-info">Room Categories List</h4>
+
+    <table class="table table-striped table-hover">
+        <thead class="table-dark">
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Price Per Night</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (roomCategories.Any())
+            {
+                @foreach (var category in roomCategories)
+                {
+                    <tr>
+                        <td>@category.Id</td>
+                        <td>@category.Name</td>
+                        <td>@category.PricePerNight</td>
+                        <td>
+                            <button class="btn btn-sm btn-primary" @onclick="() => EditRoomCategory(category)">Edit</button>
+                            <button class="btn btn-sm btn-danger" @onclick="() => DeleteRoomCategory(category.Id)">Delete</button>
+                        </td>
+                    </tr>
+                }
+            }
+            else
+            {
+                <tr>
+                    <td colspan="4" class="text-center">No room categories found.</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <hr />
+
+    <h3 class="text-center text-primary">Room Management</h3>
+
+    <EditForm Model="@roomModel" OnValidSubmit="@HandleValidSubmitRoom">
+        <DataAnnotationsValidator />
+        <ValidationSummary />
+
+        <div class="form-group mb-4">
+            <label for="roomNumber" class="form-label">Room Number:</label>
+            <InputNumber id="roomNumber" @bind-Value="roomModel.RoomNumber" class="form-control form-control-lg" />
+            <ValidationMessage For="@(() => roomModel.RoomNumber)" />
+        </div>
+        <div class="form-group mb-4">
+            <label for="categoryId" class="form-label">Category:</label>
+            <InputSelect id="categoryId" @bind-Value="roomModel.CategoryId" class="form-control form-control-lg">
+                <option value="">Select Category</option>
+                @foreach (var category in roomCategories)
+                {
+                    <option value="@category.Id">@category.Name</option>
+                }
+            </InputSelect>
+            <ValidationMessage For="@(() => roomModel.CategoryId)" />
+        </div>
+        <div class="form-group mb-4">
+            <label for="capacity" class="form-label">Capacity:</label>
+            <InputNumber id="capacity" @bind-Value="roomModel.Capacity" class="form-control form-control-lg" />
+            <ValidationMessage For="@(() => roomModel.Capacity)" />
+        </div>
+        <div class="form-group mb-4">
+            <label for="statusId" class="form-label">Status:</label>
+            <InputSelect id="statusId" @bind-Value="roomModel.StatusId" class="form-control form-control-lg">
+                <option value="">Select Status</option>
+                @foreach (var status in roomStatuses)
+                {
+                    <option value="@status.Id">@status.Name</option>
+                }
+            </InputSelect>
+            <ValidationMessage For="@(() => roomModel.StatusId)" />
+        </div>
+
+        <button type="submit" class="btn btn-success btn-lg w-100">Save Room</button>
+    </EditForm>
+
+    <hr />
+
+    <h4 class="text-center text-info">Rooms List</h4>
+
+    <table class="table table-striped table-hover">
+        <thead class="table-dark">
+            <tr>
+                <th>ID</th>
+                <th>Room Number</th>
+                <th>Category</th>
+                <th>Capacity</th>
+                <th>Status</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (rooms.Any())
+            {
+                @foreach (var room in rooms)
+                {
+                    <tr>
+                        <td>@room.Id</td>
+                        <td>@room.RoomNumber</td>
+                        <td>@room.Category?.Name</td>
+                        <td>@room.Capacity</td>
+                        <td>@room.Status?.Name</td>
+                        <td>
+                            <button class="btn btn-sm btn-primary" @onclick="() => EditRoom(room)">Edit</button>
+                            <button class="btn btn-sm btn-danger" @onclick="() => DeleteRoom(room.Id)">Delete</button>
+                        </td>
+                    </tr>
+                }
+            }
+            else
+            {
+                <tr>
+                    <td colspan="6" class="text-center">No rooms found.</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+@code {
+    private RoomStatus roomStatusModel = new RoomStatus();
+    private List<RoomStatus> roomStatuses = new List<RoomStatus>();
+
+    private Category roomCategoryModel = new Category();
+    private List<Category> roomCategories = new List<Category>();
+
+    private Room roomModel = new Room();
+    private List<Room> rooms = new List<Room>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadRoomStatuses();
+        await LoadRoomCategories();
+        await LoadRooms();
+    }
+
+    private async Task LoadRoomStatuses()
+    {
+        var result = await RoomStatusQueryService.GetAllRoomStatusesAsync();
+        roomStatuses = result?.ToList() ?? new List<RoomStatus>();
+    }
+
+    private async Task LoadRoomCategories()
+    {
+        var result = await RoomCategoryQueryService.GetAllRoomCategories();
+        roomCategories = result?.ToList() ?? new List<Category>();
+    }
+
+    private async Task LoadRooms()
+    {
+        var result = await RoomQueryService.GetAllRooms();
+        rooms = result?.ToList() ?? new List<Room>();
+    }
+
+    private async Task HandleValidSubmitRoomStatus()
+    {
+        if (roomStatusModel.Id == 0)
+        {
+            await RoomStatusCommandService.AddRoomStatus(roomStatusModel);
+        }
+        else
+        {
+            await RoomStatusCommandService.UpdateRoomStatus(roomStatusModel);
+        }
+
+        roomStatusModel = new RoomStatus(); // Reset the form
+        await LoadRoomStatuses(); // Refresh the list
+    }
+
+    private async Task HandleValidSubmitRoomCategory()
+    {
+        if (roomCategoryModel.Id == 0)
+        {
+            await RoomCategoryCommandService.AddRoomcategoryAsync(roomCategoryModel);
+        }
+        else
+        {
+            await RoomCategoryCommandService.UpdateRoomcategoryAsync(roomCategoryModel);
+        }
+
+        roomCategoryModel = new Category(); // Reset the form
+        await LoadRoomCategories(); // Refresh the list
+    }
+
+    private async Task HandleValidSubmitRoom()
+    {
+        if (roomModel.Id == 0)
+        {
+            await RoomCommandService.AddRoomAsync(roomModel);
+        }
+        else
+        {
+            await RoomCommandService.UpdateRoom(roomModel);
+        }
+
+        roomModel = new Room(); // Reset the form
+        await LoadRooms(); // Refresh the list
+    }
+
+    private void EditRoomStatus(RoomStatus status)
+    {
+        roomStatusModel = new RoomStatus
+            {
+                Id = status.Id,
+                Name = status.Name
+            };
+    }
+
+    private void EditRoomCategory(Category category)
+    {
+        roomCategoryModel = new Category
+            {
+                Id = category.Id,
+                Name = category.Name,
+                PricePerNight = category.PricePerNight
+            };
+    }
+
+    private void EditRoom(Room room)
+    {
+        roomModel = new Room
+            {
+                Id = room.Id,
+                RoomNumber = room.RoomNumber,
+                CategoryId = room.CategoryId,
+                Capacity = room.Capacity,
+                StatusId = room.StatusId
+            };
+    }
+
+    private async Task DeleteRoomStatus(int id)
+    {
+        await RoomStatusCommandService.DeleteRoomStatus(id);
+        await LoadRoomStatuses(); // Refresh the list after deleting
+    }
+
+    private async Task DeleteRoomCategory(int id)
+    {
+        await RoomCategoryCommandService.DeleteRoomcategoryAsync(id);
+        await LoadRoomCategories(); // Refresh the list after deleting
+    }
+
+    private async Task DeleteRoom(int id)
+    {
+        await RoomCommandService.DeleteRoom(id);
+        await LoadRooms(); // Refresh the list after deleting
+    }
+}

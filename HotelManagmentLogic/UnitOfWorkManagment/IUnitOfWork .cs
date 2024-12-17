@@ -34,6 +34,17 @@ namespace HotelManagmentLogic.UnitOfWorkManagment
         IRepositoryCommands<BookingPayment> BookingPaymentCommandRepository { get; }
         IRepositoryQueries<BookingPayment> BookingPaymentQueryRepository { get; }
 
+        // ROOM BLOCK
+        IRepositoryCommands<RoomStatus> RoomStatusCommandRepository { get; }
+        IRepositoryQueries<RoomStatus> RoomStatusQueryRepository { get; }
+
+        IRepositoryCommands<Room> RoomCommandRepository { get; }
+        IRepositoryQueries<Room> RoomQueryRepository { get; }
+
+        // CATEGORY BLOCK
+        IRepositoryCommands<Category> RoomCategoryCommandRepository { get; }
+        IRepositoryQueries<Category> RoomCategoryQueryRepository { get; }
+
         Task<int> CompleteAsync();
     }
 }
