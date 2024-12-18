@@ -55,6 +55,11 @@ namespace HotelManagmentLogic.UnitOfWorkManagment
         private RepositoryQueries<Booking> _bookQueryRepository;
         private RepositoryCommands<Booking> _bookStatusCommandRepository;
 
+        // STAYHISTORY SECTION
+
+        private RepositoryCommands<StayHistory> _stayHistoryCommandRepository;
+        private RepositoryQueries<StayHistory> _stayHistoryQueryRepository;
+
 
         public UnitOfWork(HotelDBContext context)
         {
@@ -356,6 +361,32 @@ namespace HotelManagmentLogic.UnitOfWorkManagment
                     _bookQueryRepository = new RepositoryQueries<Booking>(_context);
                 }
                 return _bookQueryRepository;
+            }
+        }
+
+        // STAYHISTORY BLOCK
+
+        public IRepositoryCommands<StayHistory> StayHistoryCommandRepository
+        {
+            get
+            {
+                if (_stayHistoryCommandRepository == null)
+                {
+                    _stayHistoryCommandRepository = new RepositoryCommands<StayHistory>(_context);
+                }
+                return _stayHistoryCommandRepository;
+            }
+        }
+
+        public IRepositoryQueries<StayHistory> StayHistoryQueryRepository
+        {
+            get
+            {
+                if (_stayHistoryQueryRepository == null)
+                {
+                    _stayHistoryQueryRepository = new RepositoryQueries<StayHistory>(_context);
+                }
+                return _stayHistoryQueryRepository;
             }
         }
 

@@ -58,6 +58,9 @@ builder.Services.AddScoped<BookingQueryService>();
 builder.Services.AddScoped<EmploteeActionQueryService>();
 builder.Services.AddScoped<EmployeeActionCommandService>();
 
+builder.Services.AddScoped<StayHistoryCommandService>();
+builder.Services.AddScoped<StayHistoryQueryService>();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

@@ -56,6 +56,10 @@ namespace HotelManagmentLogic.UnitOfWorkManagment
         IRepositoryCommands<Booking> BookingCommandRepository { get; }
         IRepositoryQueries<Booking> BookingQueryRepository { get; }
 
+        // STAYHISTORY BLOCK
+        IRepositoryCommands<StayHistory> StayHistoryCommandRepository { get; }
+        IRepositoryQueries<StayHistory> StayHistoryQueryRepository { get; }
+
         Task<int> CompleteAsync();
     }
 }
