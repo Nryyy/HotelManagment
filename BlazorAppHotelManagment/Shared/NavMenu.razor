@@ -1,14 +1,75 @@
-﻿<div class="top-row ps-3 navbar navbar-dark bg-dark shadow-sm">
+﻿@using Microsoft.AspNetCore.Components
+
+<style>
+    .navbar {
+        background: linear-gradient(90deg, #4c83ff, #1e3ba0);
+        border-bottom: 3px solid #ff9f43;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .navbar-brand {
+        font-weight: bold;
+        font-size: 1.5rem;
+        color: #fff;
+    }
+
+    .nav-link {
+        font-size: 1.1rem;
+        transition: color 0.3s ease;
+    }
+
+        .nav-link:hover {
+            color: #ff9f43;
+        }
+
+    .form-control {
+        border-radius: 15px;
+    }
+
+    .btn-primary {
+        background-color: #1e3ba0;
+        border: none;
+        font-size: 1rem;
+        font-weight: bold;
+        padding: 0.5rem 1.5rem;
+        transition: background-color 0.3s ease, transform 0.2s ease;
+    }
+
+        .btn-primary:hover {
+            background-color: #4c83ff;
+            transform: scale(1.05);
+        }
+
+    .alert {
+        border-radius: 10px;
+        margin-top: 1rem;
+        padding: 0.75rem 1.25rem;
+        font-weight: bold;
+    }
+
+    .collapse {
+        transition: height 0.4s ease-out;
+    }
+
+    .admin-submenu {
+        padding-left: 1rem;
+        border-left: 2px solid #1e3ba0;
+        margin-top: 0.5rem;
+    }
+</style>
+
+<div class="top-row ps-3 navbar shadow-sm">
     <div class="container-fluid">
-        <a class="navbar-brand text-white" href="">BlazorAppHotelManagement</a>
-        <button title="Navigation menu" class="navbar-toggler" @onclick="ToggleNavMenu">
+        <a class="navbar-brand" href="">HotelManagement</a>
+        <button title="Navigation menu" class="navbar-toggler text-white" @onclick="ToggleNavMenu">
             <span class="navbar-toggler-icon"></span>
         </button>
     </div>
 </div>
 
 <div class="@NavMenuCssClass">
-    <nav class="d-flex flex-column bg-light p-3 shadow-sm">
+    <nav class="d-flex flex-column bg-light p-4 shadow-sm rounded">
         <div class="nav-item px-3">
             <NavLink class="nav-link text-dark" href="" Match="NavLinkMatch.All">
                 <span class="oi oi-home" aria-hidden="true"></span> Home
@@ -18,37 +79,40 @@
         @if (isAdminAuthenticated)
         {
             <div class="nav-item px-3">
-                <!-- Administration Menu -->
                 <a class="nav-link text-dark d-flex align-items-center" href="#" @onclick="ToggleAdminSubMenu">
                     <span class="oi oi-cog me-2" aria-hidden="true"></span> Administration
                     <span class="oi oi-chevron-bottom ms-auto" aria-hidden="true"></span>
                 </a>
-                <!-- Submenu -->
-                <div class="@AdminSubMenuCssClass" style="margin-left: 20px;">
-                    <div class="nav-item px-3">
+
+                <div class="admin-submenu @AdminSubMenuCssClass">
+                    <div class="nav-item">
                         <NavLink class="nav-link text-dark" href="booking">
                             <span class="oi oi-person" aria-hidden="true"></span> Guest
                         </NavLink>
                     </div>
-                </div>
-                <div class="@AdminSubMenuCssClass" style="margin-left: 20px;">
-                    <div class="nav-item px-3">
+                    <div class="nav-item">
                         <NavLink class="nav-link text-dark" href="employee-management">
-                            <span class="oi oi-person" aria-hidden="true"></span> Staff
+                            <span class="oi oi-briefcase" aria-hidden="true"></span> Staff
                         </NavLink>
                     </div>
-                </div>
-                <div class="@AdminSubMenuCssClass" style="margin-left: 20px;">
-                    <div class="nav-item px-3">
+                    <div class="nav-item">
                         <NavLink class="nav-link text-dark" href="payment-management">
                             <span class="oi oi-credit-card" aria-hidden="true"></span> Payment
                         </NavLink>
                     </div>
-                </div>
-                <div class="@AdminSubMenuCssClass" style="margin-left: 20px;">
-                    <div class="nav-item px-3">
+                    <div class="nav-item">
                         <NavLink class="nav-link text-dark" href="room-management">
-                            <span class="oi oi-bed" aria-hidden="true"></span> Room
+                            <span class="oi oi-key" aria-hidden="true"></span> Room
+                        </NavLink>
+                    </div>
+                    <div class="nav-item">
+                        <NavLink class="nav-link text-dark" href="booking-management">
+                            <span class="oi oi-calendar" aria-hidden="true"></span> Booking
+                        </NavLink>
+                    </div>
+                    <div class="nav-item">
+                        <NavLink class="nav-link text-dark" href="employee-action">
+                            <span class="oi oi-action-redo" aria-hidden="true"></span> Employee
                         </NavLink>
                     </div>
                 </div>
@@ -112,3 +176,7 @@
         adminPassword = string.Empty; // Clear the password input
     }
 }
+
+
+
+

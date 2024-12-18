@@ -49,6 +49,15 @@ builder.Services.AddScoped<RoomcategoryQueryService>();
 builder.Services.AddScoped<RoomCommandService>();
 builder.Services.AddScoped<RoomQueryService>();
 
+builder.Services.AddScoped<BookingStatusCommandService>();
+builder.Services.AddScoped<BookingStatusQueryService>();
+
+builder.Services.AddScoped<BookingCommandService>();
+builder.Services.AddScoped<BookingQueryService>();
+
+builder.Services.AddScoped<EmploteeActionQueryService>();
+builder.Services.AddScoped<EmployeeActionCommandService>();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

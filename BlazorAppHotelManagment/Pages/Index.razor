@@ -1,9 +1,141 @@
 ﻿@page "/"
+@using Enteties
+@inject HotelManagmentLogic.Services.Commands.BookingCommandService BookingCommandService
+@inject HotelManagmentLogic.Services.Querys.GuestQueryService GuestQueryService
+@inject HotelManagmentLogic.Services.Commands.GuestCommandService GuestCommandService
+@inject HotelManagmentLogic.Services.Querys.RoomQueryService RoomQueryService
 
 <PageTitle>Index</PageTitle>
 
-<h1>Hello, world!</h1>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background: url('https://img.freepik.com/free-photo/african-american-couple-reception-arriving-hotel-preparing-check-process-happy-man-woman-asking-front-desk-staff-about-room-reservation-fill-registration-forms_482257-64936.jpg?t=st=1734532432~exp=1734536032~hmac=c9fb464170aa8b45e9f3b6487cc6738094d86bada9458e3cec14c9aacc3732f2&w=996') no-repeat center center fixed;
+        background-size: cover;
+        color: #333;
+        padding: 20px;
+    }
 
-Welcome to your new app.
+    h1 {
+        color: #fff;
+        text-align: center;
+        font-size: 2.5rem;
+        margin-bottom: 30px;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+    }
 
-<SurveyPrompt Title="How is Blazor working for you?" />
+    .form-container {
+        background: rgba(255, 255, 255, 0.9);
+        border-radius: 10px;
+        padding: 30px;
+        max-width: 600px;
+        margin: 0 auto;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    }
+
+    .form-label {
+        font-weight: bold;
+        color: #555;
+    }
+
+    .form-control {
+        border-radius: 5px;
+        font-size: 1rem;
+        padding: 10px;
+        border: 1px solid #ddd;
+    }
+
+    .btn {
+        background-color: #28a745;
+        color: white;
+        font-size: 1.2rem;
+        border-radius: 5px;
+        padding: 10px 20px;
+        transition: background-color 0.3s ease;
+    }
+
+        .btn:hover {
+            background-color: #218838;
+        }
+
+    .form-group {
+        margin-bottom: 20px;
+    }
+</style>
+
+<div class="form-container">
+    <h1>Make a Booking</h1>
+
+    <EditForm Model="@bookingModel" OnValidSubmit="@HandleValidSubmitBooking">
+        <DataAnnotationsValidator />
+        <ValidationSummary />
+
+        <div class="form-group">
+            <label for="firstName" class="form-label">First Name:</label>
+            <InputText id="firstName" @bind-Value="guestModel.FirstName" class="form-control" />
+            <ValidationMessage For="@(() => guestModel.FirstName)" />
+        </div>
+        <div class="form-group">
+            <label for="lastName" class="form-label">Last Name:</label>
+            <InputText id="lastName" @bind-Value="guestModel.LastName" class="form-control" />
+            <ValidationMessage For="@(() => guestModel.LastName)" />
+        </div>
+        <div class="form-group">
+            <label for="phoneNumber" class="form-label">Phone Number:</label>
+            <InputText id="phoneNumber" @bind-Value="guestModel.PhoneNumber" class="form-control" />
+            <ValidationMessage For="@(() => guestModel.PhoneNumber)" />
+        </div>
+        <div class="form-group">
+            <label for="email" class="form-label">Email:</label>
+            <InputText id="email" @bind-Value="guestModel.Email" class="form-control" />
+            <ValidationMessage For="@(() => guestModel.Email)" />
+        </div>
+        <div class="form-group">
+            <label for="address" class="form-label">Address:</label>
+            <InputText id="address" @bind-Value="guestModel.Address" class="form-control" />
+            <ValidationMessage For="@(() => guestModel.Address)" />
+        </div>
+        <div class="form-group">
+            <label for="bookingDay" class="form-label">Booking Day:</label>
+            <InputDate id="bookingDay" @bind-Value="bookingModel.BookingDay" class="form-control" />
+            <ValidationMessage For="@(() => bookingModel.BookingDay)" />
+        </div>
+        <div class="form-group">
+            <label for="startDate" class="form-label">Start Date:</label>
+            <InputDate id="startDate" @bind-Value="bookingModel.StartDate" class="form-control" />
+            <ValidationMessage For="@(() => bookingModel.StartDate)" />
+        </div>
+        <div class="form-group">
+            <label for="endDate" class="form-label">End Date:</label>
+            <InputDate id="endDate" @bind-Value="bookingModel.EndDate" class="form-control" />
+            <ValidationMessage For="@(() => bookingModel.EndDate)" />
+        </div>
+
+        <button type="submit" class="btn w-100">Save Booking</button>
+    </EditForm>
+</div>
+
+@code {
+    private Booking bookingModel = new Booking();
+    private Guest guestModel = new Guest();
+
+    private async Task HandleValidSubmitBooking()
+    {
+        // Save guest details first
+        await GuestCommandService.AddGuestAsync(guestModel);
+
+        // Set the guest ID in the booking model
+        bookingModel.GuestId = guestModel.Id;
+
+        // Set default values for other fields
+        bookingModel.RoomId = 1; // To be assigned by admin
+        bookingModel.StatusId = 1; // To be assigned by admin
+
+        // Save the booking
+        await BookingCommandService.CreateBookingAsync(bookingModel);
+
+        // Reset the form
+        guestModel = new Guest();
+        bookingModel = new Booking();
+    }
+}

@@ -1,0 +1,135 @@
+﻿@page "/employee-action"
+@using Enteties
+@inject HotelManagmentLogic.Services.Commands.EmployeeActionCommandService EmployeeActionCommandService
+@inject HotelManagmentLogic.Services.Querys.EmploteeActionQueryService EmploteeActionQueryService
+@inject HotelManagmentLogic.Services.Querys.EmployeeQueryService EmployeeQueryService
+
+<h3>Employee Actions Management</h3>
+
+<EditForm Model="@employeeActionModel" OnValidSubmit="@HandleValidSubmitEmployeeAction">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <div class="form-group mb-4">
+        <label for="employeeId" class="form-label">Employee:</label>
+        <InputSelect id="employeeId" @bind-Value="employeeActionModel.EmployeeId" class="form-control form-control-lg">
+            <option value="">Select Employee</option>
+            @foreach (var employee in employees)
+            {
+                <option value="@employee.Id">@employee.FirstName @employee.LastName</option>
+            }
+        </InputSelect>
+        <ValidationMessage For="@(() => employeeActionModel.EmployeeId)" />
+    </div>
+    <div class="form-group mb-4">
+        <label for="actionDescription" class="form-label">Action Description:</label>
+        <InputText id="actionDescription" @bind-Value="employeeActionModel.ActionDescription" class="form-control form-control-lg" />
+        <ValidationMessage For="@(() => employeeActionModel.ActionDescription)" />
+    </div>
+    <div class="form-group mb-4">
+        <label for="actionDate" class="form-label">Action Date:</label>
+        <InputDate id="actionDate" @bind-Value="employeeActionModel.ActionDate" class="form-control form-control-lg" />
+        <ValidationMessage For="@(() => employeeActionModel.ActionDate)" />
+    </div>
+
+    <button type="submit" class="btn btn-success btn-lg w-100">Save Action</button>
+</EditForm>
+
+<hr />
+
+<h4>Employee Actions List</h4>
+<table class="table table-striped table-hover">
+    <thead class="table-dark">
+        <tr>
+            <th>ID</th>
+            <th>Employee</th>
+            <th>Action Description</th>
+            <th>Action Date</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (employeeActions.Any())
+        {
+            @foreach (var action in employeeActions)
+            {
+                <tr>
+                    <td>@action.Id</td>
+                    <td>@action.Employee?.FirstName @action.Employee?.LastName</td>
+                    <td>@action.ActionDescription</td>
+                    <td>@action.ActionDate.ToShortDateString()</td>
+                    <td>
+                        <button class="btn btn-sm btn-primary" @onclick="() => EditEmployeeAction(action)">Edit</button>
+                        <button class="btn btn-sm btn-danger" @onclick="() => DeleteEmployeeAction(action.Id)">Delete</button>
+                    </td>
+                </tr>
+            }
+        }
+        else
+        {
+            <tr>
+                <td colspan="5" class="text-center">No employee actions found.</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@code {
+    private Enteties.EmployeeAction employeeActionModel = new Enteties.EmployeeAction();
+    private List<Enteties.EmployeeAction> employeeActions = new List<Enteties.EmployeeAction>();
+    private List<Employee> employees = new List<Employee>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadEmployeeActions();
+        await LoadEmployees();
+    }
+
+    private async Task LoadEmployeeActions()
+    {
+        var result = await EmploteeActionQueryService.GetAllEmployeeActionsAsync();
+        employeeActions = result?.ToList() ?? new List<Enteties.EmployeeAction>();
+    }
+
+    private async Task LoadEmployees()
+    {
+        var result = await EmployeeQueryService.GetAllEmployeesAsync();
+        employees = result?.ToList() ?? new List<Employee>();
+    }
+
+    private async Task HandleValidSubmitEmployeeAction()
+    {
+        if (employeeActionModel.Id == 0)
+        {
+            await EmployeeActionCommandService.AddEmployeeActionAsync(employeeActionModel);
+        }
+        else
+        {
+            await EmployeeActionCommandService.UpdateEmployeeActionAsync(employeeActionModel);
+        }
+
+        employeeActionModel = new Enteties.EmployeeAction(); // Reset the form
+        await LoadEmployeeActions(); // Refresh the list
+    }
+
+    private void EditEmployeeAction(Enteties.EmployeeAction action)
+    {
+        employeeActionModel = new Enteties.EmployeeAction
+        {
+            Id = action.Id,
+            EmployeeId = action.EmployeeId,
+            ActionDescription = action.ActionDescription,
+            ActionDate = action.ActionDate
+        };
+    }
+
+    private async Task DeleteEmployeeAction(int id)
+    {
+        await EmployeeActionCommandService.DeleteEmployeeActionAsync(id);
+        await LoadEmployeeActions(); // Refresh the list after deleting
+    }
+}
+
+
+
+

@@ -1,0 +1,274 @@
+﻿@page "/booking-management"
+@using Enteties
+@inject HotelManagmentLogic.Services.Commands.BookingCommandService BookingCommandService
+@inject HotelManagmentLogic.Services.Querys.BookingQueryService BookingQueryService
+@inject HotelManagmentLogic.Services.Commands.BookingStatusCommandService BookingStatusCommandService
+@inject HotelManagmentLogic.Services.Querys.BookingStatusQueryService BookingStatusQueryService
+@inject HotelManagmentLogic.Services.Querys.GuestQueryService GuestQueryService
+@inject HotelManagmentLogic.Services.Querys.RoomQueryService RoomQueryService
+
+<h3>Booking Management</h3>
+
+<EditForm Model="@bookingModel" OnValidSubmit="@HandleValidSubmitBooking">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <div class="form-group mb-4">
+        <label for="guestId" class="form-label">Guest:</label>
+        <InputSelect id="guestId" @bind-Value="bookingModel.GuestId" class="form-control form-control-lg">
+            <option value="">Select Guest</option>
+            @foreach (var guest in guests)
+            {
+                <option value="@guest.Id">@guest.FirstName @guest.LastName</option>
+            }
+        </InputSelect>
+        <ValidationMessage For="@(() => bookingModel.GuestId)" />
+    </div>
+    <div class="form-group mb-4">
+        <label for="roomId" class="form-label">Room:</label>
+        <InputSelect id="roomId" @bind-Value="bookingModel.RoomId" class="form-control form-control-lg">
+            <option value="">Select Room</option>
+            @foreach (var room in rooms)
+            {
+                <option value="@room.Id">@room.RoomNumber</option>
+            }
+        </InputSelect>
+        <ValidationMessage For="@(() => bookingModel.RoomId)" />
+    </div>
+    <div class="form-group mb-4">
+        <label for="bookingDay" class="form-label">Booking Day:</label>
+        <InputDate id="bookingDay" @bind-Value="bookingModel.BookingDay" class="form-control form-control-lg" />
+        <ValidationMessage For="@(() => bookingModel.BookingDay)" />
+    </div>
+    <div class="form-group mb-4">
+        <label for="startDate" class="form-label">Start Date:</label>
+        <InputDate id="startDate" @bind-Value="bookingModel.StartDate" class="form-control form-control-lg" />
+        <ValidationMessage For="@(() => bookingModel.StartDate)" />
+    </div>
+    <div class="form-group mb-4">
+        <label for="endDate" class="form-label">End Date:</label>
+        <InputDate id="endDate" @bind-Value="bookingModel.EndDate" class="form-control form-control-lg" />
+        <ValidationMessage For="@(() => bookingModel.EndDate)" />
+    </div>
+    <div class="form-group mb-4">
+        <label for="statusId" class="form-label">Status:</label>
+        <InputSelect id="statusId" @bind-Value="bookingModel.StatusId" class="form-control form-control-lg">
+            <option value="">Select Status</option>
+            @foreach (var status in bookingStatuses)
+            {
+                <option value="@status.Id">@status.Name</option>
+            }
+        </InputSelect>
+        <ValidationMessage For="@(() => bookingModel.StatusId)" />
+    </div>
+
+    <button type="submit" class="btn btn-primary mt-2">Save Booking</button>
+</EditForm>
+
+<hr />
+
+<h4>Bookings List</h4>
+<table class="table table-striped table-hover">
+    <thead class="table-dark">
+        <tr>
+            <th>ID</th>
+            <th>Guest</th>
+            <th>Room</th>
+            <th>Booking Day</th>
+            <th>Start Date</th>
+            <th>End Date</th>
+            <th>Status</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (bookings.Any())
+        {
+            @foreach (var booking in bookings)
+            {
+                <tr>
+                    <td>@booking.Id</td>
+                    <td>@booking.Guest?.FirstName @booking.Guest?.LastName</td>
+                    <td>@booking.Room?.RoomNumber</td>
+                    <td>@booking.BookingDay.ToShortDateString()</td>
+                    <td>@booking.StartDate.ToShortDateString()</td>
+                    <td>@booking.EndDate.ToShortDateString()</td>
+                    <td>@booking.Status?.Name</td>
+                    <td>
+                        <button class="btn btn-sm btn-primary" @onclick="() => EditBooking(booking)">Edit</button>
+                        <button class="btn btn-sm btn-danger" @onclick="() => DeleteBooking(booking.Id)">Delete</button>
+                    </td>
+                </tr>
+            }
+        }
+        else
+        {
+            <tr>
+                <td colspan="8" class="text-center">No bookings found.</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<hr />
+
+<h3>Booking Status Management</h3>
+
+<EditForm Model="@bookingStatusModel" OnValidSubmit="@HandleValidSubmitBookingStatus">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <div>
+        <label for="statusName">Status Name:</label>
+        <InputText id="statusName" @bind-Value="bookingStatusModel.Name" class="form-control" />
+        <ValidationMessage For="@(() => bookingStatusModel.Name)" />
+    </div>
+
+    <button type="submit" class="btn btn-primary mt-2">Save</button>
+</EditForm>
+
+<hr />
+
+<h4>Booking Statuses List</h4>
+<table class="table">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (bookingStatuses.Any())
+        {
+            @foreach (var status in bookingStatuses)
+            {
+                <tr>
+                    <td>@status.Id</td>
+                    <td>@status.Name</td>
+                    <td>
+                        <button class="btn btn-sm btn-primary" @onclick="() => EditBookingStatus(status)">Edit</button>
+                        <button class="btn btn-sm btn-danger" @onclick="() => DeleteBookingStatus(status.Id)">Delete</button>
+                    </td>
+                </tr>
+            }
+        }
+        else
+        {
+            <tr>
+                <td colspan="3" class="text-center">No booking statuses found.</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@code {
+    private Booking bookingModel = new Booking();
+    private List<Booking> bookings = new List<Booking>();
+    private List<Guest> guests = new List<Guest>();
+    private List<Room> rooms = new List<Room>();
+    private List<BookingStatus> bookingStatuses = new List<BookingStatus>();
+    private BookingStatus bookingStatusModel = new BookingStatus();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadBookings();
+        await LoadGuests();
+        await LoadRooms();
+        await LoadBookingStatuses();
+    }
+
+    private async Task LoadBookings()
+    {
+        var result = await BookingQueryService.GetBookingsAsync();
+        bookings = result?.ToList() ?? new List<Booking>();
+    }
+
+    private async Task LoadGuests()
+    {
+        var result = await GuestQueryService.GetAllGuestsAsync();
+        guests = result?.ToList() ?? new List<Guest>();
+    }
+
+    private async Task LoadRooms()
+    {
+        var result = await RoomQueryService.GetAllRooms();
+        rooms = result?.ToList() ?? new List<Room>();
+    }
+
+    private async Task LoadBookingStatuses()
+    {
+        var result = await BookingStatusQueryService.GetAllBookingStatusAsync();
+        bookingStatuses = result?.ToList() ?? new List<BookingStatus>();
+    }
+
+    private async Task HandleValidSubmitBooking()
+    {
+        if (bookingModel.Id == 0)
+        {
+            await BookingCommandService.CreateBookingAsync(bookingModel);
+        }
+        else
+        {
+            await BookingCommandService.UpdateBookingAsync(bookingModel);
+        }
+
+        bookingModel = new Booking(); // Reset the form
+        await LoadBookings(); // Refresh the list
+    }
+
+    private void EditBooking(Booking booking)
+    {
+        bookingModel = new Booking
+            {
+                Id = booking.Id,
+                GuestId = booking.GuestId,
+                RoomId = booking.RoomId,
+                BookingDay = booking.BookingDay,
+                StartDate = booking.StartDate,
+                EndDate = booking.EndDate,
+                StatusId = booking.StatusId
+            };
+    }
+
+    private async Task DeleteBooking(int id)
+    {
+        await BookingCommandService.DeleteBookingAsync(id);
+        await LoadBookings(); // Refresh the list after deleting
+    }
+
+    private async Task HandleValidSubmitBookingStatus()
+    {
+        if (bookingStatusModel.Id == 0)
+        {
+            await BookingStatusCommandService.AddBookingStatus(bookingStatusModel);
+        }
+        else
+        {
+            await BookingStatusCommandService.UpdateBookingStatus(bookingStatusModel);
+        }
+
+        bookingStatusModel = new BookingStatus(); // Reset the form
+        await LoadBookingStatuses(); // Refresh the list
+    }
+
+    private void EditBookingStatus(BookingStatus status)
+    {
+        bookingStatusModel = new BookingStatus
+            {
+                Id = status.Id,
+                Name = status.Name
+            };
+    }
+
+    private async Task DeleteBookingStatus(int id)
+    {
+        await BookingStatusCommandService.DeleteBookingStatus(id);
+        await LoadBookingStatuses(); // Refresh the list after deleting
+    }
+}
+
+
+
+
+

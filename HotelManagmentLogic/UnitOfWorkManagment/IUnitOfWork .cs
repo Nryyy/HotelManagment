@@ -20,6 +20,9 @@ namespace HotelManagmentLogic.UnitOfWorkManagment
         IRepositoryQueries<Employee> EmployeeQueryRepository { get; }
         IRepositoryCommands<Employee> EmployeeCommandRepository { get; }
 
+        IRepositoryCommands<EmployeeAction> EmployeeActionCommandRepository { get; }
+        IRepositoryQueries<EmployeeAction> EmployeeActionQueryRepository { get; }
+
         // ROLE BLOCK
         IRepositoryQueries<Role> RoleQueryRepository { get; }
         IRepositoryCommands<Role> RoleCommandRepository { get; }
@@ -44,6 +47,14 @@ namespace HotelManagmentLogic.UnitOfWorkManagment
         // CATEGORY BLOCK
         IRepositoryCommands<Category> RoomCategoryCommandRepository { get; }
         IRepositoryQueries<Category> RoomCategoryQueryRepository { get; }
+
+        // BOOKING BLOCK
+
+        IRepositoryCommands<BookingStatus> BookingStatusCommandRepository { get; }
+        IRepositoryQueries<BookingStatus> BookingStatusQueryRepository { get; }
+
+        IRepositoryCommands<Booking> BookingCommandRepository { get; }
+        IRepositoryQueries<Booking> BookingQueryRepository { get; }
 
         Task<int> CompleteAsync();
     }

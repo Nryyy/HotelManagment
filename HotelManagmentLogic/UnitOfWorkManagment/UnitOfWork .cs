@@ -23,6 +23,8 @@ namespace HotelManagmentLogic.UnitOfWorkManagment
         // EMPLOYEE SECTION
         private RepositoryQueries<Employee> _employeeQueryRepository;
         private RepositoryCommands<Employee> _employeeCommandRepository;
+        private RepositoryCommands<EmployeeAction> _employeeActionCommandRepository;
+        private RepositoryQueries<EmployeeAction> _employeeActionQueryRepository;
 
         // ROLE SECTION
         private RepositoryQueries<Role> _roleQueryRepository;
@@ -46,6 +48,12 @@ namespace HotelManagmentLogic.UnitOfWorkManagment
         // CATEGORY SECTION
         private RepositoryCommands<Category> _roomCategoryCommandRepository;
         private RepositoryQueries<Category> _roomCategoryQueryRepository;
+
+        // BOOKING SECTION
+        private RepositoryCommands<BookingStatus> _bookingCommandRepository;
+        private RepositoryQueries<BookingStatus> _bookingQueryRepository;
+        private RepositoryQueries<Booking> _bookQueryRepository;
+        private RepositoryCommands<Booking> _bookStatusCommandRepository;
 
 
         public UnitOfWork(HotelDBContext context)
@@ -101,6 +109,30 @@ namespace HotelManagmentLogic.UnitOfWorkManagment
                     _employeeCommandRepository = new RepositoryCommands<Employee>(_context);
                 }
                 return _employeeCommandRepository;
+            }
+        }
+
+        public IRepositoryCommands<EmployeeAction> EmployeeActionCommandRepository
+        {
+            get
+            {
+                if (_employeeActionCommandRepository == null)
+                {
+                    _employeeActionCommandRepository = new RepositoryCommands<EmployeeAction>(_context);
+                }
+                return _employeeActionCommandRepository;
+            }
+        }
+
+        public IRepositoryQueries<EmployeeAction> EmployeeActionQueryRepository
+        {
+            get
+            {
+                if (_employeeActionQueryRepository == null)
+                {
+                    _employeeActionQueryRepository = new RepositoryQueries<EmployeeAction>(_context);
+                }
+                return _employeeActionQueryRepository;
             }
         }
 
@@ -274,6 +306,56 @@ namespace HotelManagmentLogic.UnitOfWorkManagment
                     _roomCategoryCommandRepository = new RepositoryCommands<Category>(_context);
                 }
                 return _roomCategoryCommandRepository;
+            }
+        }
+
+        // BOOKING BLOCK
+
+        public IRepositoryCommands<BookingStatus> BookingStatusCommandRepository
+        {
+            get
+            {
+                if (_bookingCommandRepository == null)
+                {
+                    _bookingCommandRepository = new RepositoryCommands<BookingStatus>(_context);
+                }
+                return _bookingCommandRepository;
+            }
+        }
+
+        public IRepositoryQueries<BookingStatus> BookingStatusQueryRepository
+        {
+            get
+            {
+                if (_bookingQueryRepository == null)
+                {
+                    _bookingQueryRepository = new RepositoryQueries<BookingStatus>(_context);
+                }
+                return _bookingQueryRepository;
+            }
+        }
+
+        public IRepositoryCommands<Booking> BookingCommandRepository
+        {
+            get
+            {
+                if (_bookStatusCommandRepository == null)
+                {
+                    _bookStatusCommandRepository = new RepositoryCommands<Booking>(_context);
+                }
+                return _bookStatusCommandRepository;
+            }
+        }
+
+        public IRepositoryQueries<Booking> BookingQueryRepository
+        {
+            get
+            {
+                if (_bookQueryRepository == null)
+                {
+                    _bookQueryRepository = new RepositoryQueries<Booking>(_context);
+                }
+                return _bookQueryRepository;
             }
         }
 

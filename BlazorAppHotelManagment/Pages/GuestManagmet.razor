@@ -3,74 +3,80 @@
 @inject HotelManagmentLogic.Services.Commands.GuestCommandService CommandService
 @inject HotelManagmentLogic.Services.Querys.GuestQueryService QueryService
 
-<h3>Guest Management</h3>
+<h3 class="text-center text-primary">Guest Management</h3>
 
-<EditForm Model="@guestModel" OnValidSubmit="@HandleValidSubmit" FormName="guestForm">
-    <DataAnnotationsValidator />
-    <ValidationSummary />
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-md-6 offset-md-3">
+            <EditForm Model="@guestModel" OnValidSubmit="@HandleValidSubmit" class="card p-4 shadow-sm">
+                <DataAnnotationsValidator />
+                <ValidationSummary class="text-danger" />
 
-    <div>
-        <label for="firstName">First Name:</label>
-        <InputText id="firstName" @bind-Value="guestModel.FirstName" />
-        <ValidationMessage For="@(() => guestModel.FirstName)" />
-    </div>
-    <div>
-        <label for="lastName">Last Name:</label>
-        <InputText id="lastName" @bind-Value="guestModel.LastName" />
-        <ValidationMessage For="@(() => guestModel.LastName)" />
-    </div>
-    <div>
-        <label for="email">Email:</label>
-        <InputText id="email" @bind-Value="guestModel.Email" />
-        <ValidationMessage For="@(() => guestModel.Email)" />
-    </div>
-    <div>
-        <label for="phoneNumber">Phone Number:</label>
-        <InputText id="phoneNumber" @bind-Value="guestModel.PhoneNumber" />
-        <ValidationMessage For="@(() => guestModel.PhoneNumber)" />
-    </div>
-    <div>
-        <label for="address">Address:</label>
-        <InputText id="address" @bind-Value="guestModel.Address" />
-        <ValidationMessage For="@(() => guestModel.Address)" />
+                <div class="form-group mb-3">
+                    <label for="firstName" class="form-label">First Name:</label>
+                    <InputText id="firstName" @bind-Value="guestModel.FirstName" class="form-control" />
+                    <ValidationMessage For="@(() => guestModel.FirstName)" class="text-danger" />
+                </div>
+                <div class="form-group mb-3">
+                    <label for="lastName" class="form-label">Last Name:</label>
+                    <InputText id="lastName" @bind-Value="guestModel.LastName" class="form-control" />
+                    <ValidationMessage For="@(() => guestModel.LastName)" class="text-danger" />
+                </div>
+                <div class="form-group mb-3">
+                    <label for="email" class="form-label">Email:</label>
+                    <InputText id="email" @bind-Value="guestModel.Email" class="form-control" />
+                    <ValidationMessage For="@(() => guestModel.Email)" class="text-danger" />
+                </div>
+                <div class="form-group mb-3">
+                    <label for="phoneNumber" class="form-label">Phone Number:</label>
+                    <InputText id="phoneNumber" @bind-Value="guestModel.PhoneNumber" class="form-control" />
+                    <ValidationMessage For="@(() => guestModel.PhoneNumber)" class="text-danger" />
+                </div>
+                <div class="form-group mb-3">
+                    <label for="address" class="form-label">Address:</label>
+                    <InputText id="address" @bind-Value="guestModel.Address" class="form-control" />
+                    <ValidationMessage For="@(() => guestModel.Address)" class="text-danger" />
+                </div>
+
+                <button type="submit" class="btn btn-primary w-100">Save</button>
+            </EditForm>
+        </div>
     </div>
 
-    <button type="submit">Save</button>
-</EditForm>
+    <hr class="my-5" />
 
-<hr />
-
-<h4>Guests List</h4>
-<table class="table">
-    <thead>
-        <tr>
-            <th>ID</th>
-            <th>First Name</th>
-            <th>Last Name</th>
-            <th>Email</th>
-            <th>Phone</th>
-            <th>Address</th>
-            <th>Actions</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var guest in guests)
-        {
+    <h4 class="text-center text-info">Guests List</h4>
+    <table class="table table-striped table-hover mt-4">
+        <thead class="table-dark">
             <tr>
-                <td>@guest.Id</td>
-                <td>@guest.FirstName</td>
-                <td>@guest.LastName</td>
-                <td>@guest.Email</td>
-                <td>@guest.PhoneNumber</td>
-                <td>@guest.Address</td>
-                <td>
-                    <button class="btn btn-sm btn-primary" @onclick="() => EditGuest(guest)">Edit</button>
-                    <button class="btn btn-sm btn-danger" @onclick="() => DeleteGuest(guest.Id)">Delete</button>
-                </td>
+                <th>ID</th>
+                <th>First Name</th>
+                <th>Last Name</th>
+                <th>Email</th>
+                <th>Phone</th>
+                <th>Address</th>
+                <th>Actions</th>
             </tr>
-        }
-    </tbody>
-</table>
+        </thead>
+        <tbody>
+            @foreach (var guest in guests)
+            {
+                <tr>
+                    <td>@guest.Id</td>
+                    <td>@guest.FirstName</td>
+                    <td>@guest.LastName</td>
+                    <td>@guest.Email</td>
+                    <td>@guest.PhoneNumber</td>
+                    <td>@guest.Address</td>
+                    <td>
+                        <button class="btn btn-sm btn-primary me-2" @onclick="() => EditGuest(guest)">Edit</button>
+                        <button class="btn btn-sm btn-danger" @onclick="() => DeleteGuest(guest.Id)">Delete</button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
 
 @code {
     private Guest guestModel = new Guest();
@@ -113,3 +119,8 @@
         await LoadGuests(); // Refresh the list after deleting
     }
 }
+
+
+
+
+
